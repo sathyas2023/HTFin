@@ -5,6 +5,9 @@ clear all;
 m = @(h,P,k,A) sqrt((h*P)/(k*A));
 T = @(h,k,m,L,x,Tb,Ti) ((cosh(m*(L-x))+(h/(m*k))*sinh(m*(L-x)))/ ...
                  (cosh(m*L)+(h/(m*k))*sinh(m*L)))*(Tb-Ti)+Ti;
+q = @(h,m,P,k,A,L,Tb,Ti) sqrt(h*P*k*A)*(Tb-Ti)* ...
+     ((sinh(m*L)+(h/(m*k))*cosh(m*L))/ ...
+      (cosh(m*L)+(h/(m*k))*sinh(m*L)));
             
 % Areas [m^2]
 A_steel = pi/4*0.0128^2;
@@ -61,7 +64,7 @@ tc_T_aluminum_forced = [23.07 23.11 24.34 27.16 38.19] + 273.15;
 
 %% brass_free
 F_min = inf;
-h_actual = -1;
+h_brass_free = -1;
 for i = 1:0.01:1000
     h = i;
     m_h = m(h,P_brass,k_brass,A_brass);
@@ -75,14 +78,14 @@ for i = 1:0.01:1000
         (tc_T_brass_free(5) - T5)^2;
     if F < F_min
         F_min = F;
-        h_actual = h;
+        h_brass_free = h;
     end
 end
-fprintf('brass_free: h = %f W/m-K\n',h_actual);
+fprintf('brass_free: h = %f W/m-K\n',h_brass_free);
 
 %% copper_free
 F_min = inf;
-h_actual = -1;
+h_copper_free = -1;
 for i = 1:0.01:1000
     h = i;
     m_h = m(h,P_copper,k_copper,A_copper);
@@ -96,14 +99,14 @@ for i = 1:0.01:1000
         (tc_T_copper_free(5) - T5)^2;
     if F < F_min
         F_min = F;
-        h_actual = h;
+        h_copper_free = h;
     end
 end
-fprintf('copper_free: h = %f W/m-K\n',h_actual);
+fprintf('copper_free: h = %f W/m-K\n',h_copper_free);
 
 %% steel_free
 F_min = inf;
-h_actual = -1;
+h_steel_free = -1;
 for i = 1:0.01:1000
     h = i;
     m_h = m(h,P_steel,k_steel,A_steel);
@@ -117,14 +120,14 @@ for i = 1:0.01:1000
         (tc_T_steel_free(5) - T5)^2;
     if F < F_min
         F_min = F;
-        h_actual = h;
+        h_steel_free = h;
     end
 end
-fprintf('steel_free: h = %f W/m-K\n',h_actual);
+fprintf('steel_free: h = %f W/m-K\n',h_steel_free);
 
 %% aluminum_free
 F_min = inf;
-h_actual = -1;
+h_aluminum_free = -1;
 for i = 1:0.01:1000
     h = i;
     m_h = m(h,P_aluminum,k_aluminum,A_aluminum);
@@ -138,14 +141,14 @@ for i = 1:0.01:1000
         (tc_T_aluminum_free(5) - T5)^2;
     if F < F_min
         F_min = F;
-        h_actual = h;
+        h_aluminum_free = h;
     end
 end
-fprintf('aluminum_free: h = %f W/m-K\n',h_actual);
+fprintf('aluminum_free: h = %f W/m-K\n',h_aluminum_free);
 
 %% brass_forced
 F_min = inf;
-h_actual = -1;
+h_brass_forced = -1;
 for i = 1:0.01:1000
     h = i;
     m_h = m(h,P_brass,k_brass,A_brass);
@@ -159,14 +162,14 @@ for i = 1:0.01:1000
         (tc_T_brass_forced(5) - T5)^2;
     if F < F_min
         F_min = F;
-        h_actual = h;
+        h_brass_forced = h;
     end
 end
-fprintf('brass_forced: h = %f W/m-K\n',h_actual);
+fprintf('brass_forced: h = %f W/m-K\n',h_brass_forced);
 
 %% copper_forced
 F_min = inf;
-h_actual = -1;
+h_copper_forced = -1;
 for i = 1:0.01:1000
     h = i;
     m_h = m(h,P_copper,k_copper,A_copper);
@@ -180,14 +183,14 @@ for i = 1:0.01:1000
         (tc_T_copper_forced(5) - T5)^2;
     if F < F_min
         F_min = F;
-        h_actual = h;
+        h_copper_forced = h;
     end
 end
-fprintf('copper_forced: h = %f W/m-K\n',h_actual);
+fprintf('copper_forced: h = %f W/m-K\n',h_copper_forced);
 
 %% steel_forced
 F_min = inf;
-h_actual = -1;
+h_steel_forced = -1;
 for i = 1:0.01:1000
     h = i;
     m_h = m(h,P_steel,k_steel,A_steel);
@@ -201,14 +204,14 @@ for i = 1:0.01:1000
         (tc_T_steel_forced(5) - T5)^2;
     if F < F_min
         F_min = F;
-        h_actual = h;
+        h_steel_forced = h;
     end
 end
-fprintf('steel_forced: h = %f W/m-K\n',h_actual);
+fprintf('steel_forced: h = %f W/m-K\n',h_steel_forced);
 
 %% aluminum_forced
 F_min = inf;
-h_actual = -1;
+h_aluminum_forced = -1;
 for i = 1:0.01:1000
     h = i;
     m_h = m(h,P_aluminum,k_aluminum,A_aluminum);
@@ -222,8 +225,43 @@ for i = 1:0.01:1000
         (tc_T_aluminum_forced(5) - T5)^2;
     if F < F_min
         F_min = F;
-        h_actual = h;
+        h_aluminum_forced = h;
     end
 end
-fprintf('aluminum_forced: h = %f W/m-K\n',h_actual);
+fprintf('aluminum_forced: h = %f W/m-K\n',h_aluminum_forced);
+
+%% q_fin
+% q = @(h,m,P,k,A,L,Tb,Ti)
+m_brass_free = m(h_brass_free,P_brass,k_brass,A_brass);
+q_fin_brass_free = q(h_brass_free,m_brass_free,P_brass,k_brass,A_brass,L_brass,Tb_brass_free,T_inf);
+
+m_copper_free = m(h_copper_free,P_copper,k_copper,A_copper);
+q_fin_copper_free = q(h_copper_free,m_copper_free,P_copper,k_copper,A_copper,L_copper,Tb_copper_free,T_inf);
+
+m_steel_free = m(h_steel_free,P_steel,k_steel,A_steel);
+q_fin_steel_free = q(h_steel_free,m_steel_free,P_steel,k_steel,A_steel,L_steel,Tb_steel_free,T_inf);
+
+m_aluminum_free = m(h_aluminum_free,P_aluminum,k_aluminum,A_aluminum);
+q_fin_aluminum_free = q(h_aluminum_free,m_aluminum_free,P_aluminum,k_aluminum,A_aluminum,L_aluminum,Tb_aluminum_free,T_inf);
+
+m_brass_forced = m(h_brass_forced,P_brass,k_brass,A_brass);
+q_fin_brass_forced = q(h_brass_forced,m_brass_forced,P_brass,k_brass,A_brass,L_brass,Tb_brass_forced,T_inf);
+
+m_copper_forced = m(h_copper_forced,P_copper,k_copper,A_copper);
+q_fin_copper_forced = q(h_copper_forced,m_copper_forced,P_copper,k_copper,A_copper,L_copper,Tb_copper_forced,T_inf);
+
+m_steel_forced = m(h_steel_forced,P_steel,k_steel,A_steel);
+q_fin_steel_forced = q(h_steel_forced,m_steel_forced,P_steel,k_steel,A_steel,L_steel,Tb_steel_forced,T_inf);
+
+m_aluminum_forced = m(h_aluminum_forced,P_aluminum,k_aluminum,A_aluminum);
+q_fin_aluminum_forced = q(h_aluminum_forced,m_aluminum_forced,P_aluminum,k_aluminum,A_aluminum,L_aluminum,Tb_aluminum_forced,T_inf);
+
+fprintf('brass_free: qfin = %f W\n', q_fin_brass_free);
+fprintf('copper_free: qfin = %f W\n', q_fin_copper_free);
+fprintf('steel_free: qfin = %f W\n', q_fin_steel_free);
+fprintf('aluminum_free: qfin = %f W\n', q_fin_aluminum_free);
+fprintf('brass_forced: qfin = %f W\n', q_fin_brass_forced);
+fprintf('copper_forced: qfin = %f W\n', q_fin_copper_forced);
+fprintf('steel_forced: qfin = %f W\n', q_fin_steel_forced);
+fprintf('aluminum_forced: qfin = %f W\n', q_fin_aluminum_forced);
 
